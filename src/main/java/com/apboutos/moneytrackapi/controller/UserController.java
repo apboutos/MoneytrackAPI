@@ -15,18 +15,17 @@ import java.time.Instant;
 
 
 @RestController
-@RequestMapping(value = "/API/User",produces = "application/json")
+@RequestMapping(value = "/api/v1/users",produces = "application/json")
 @AllArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
 
-    @PostMapping(value = "/")
+    @PostMapping
     UserRegistrationResponse postUser(@RequestBody UserRegistrationRequest request) throws UsernameTakenException, EmailTakenException, UserNotSavedException {
 
         EmailConfirmationToken token = userService.registerUser(request);
-
         return new UserRegistrationResponse(
                 "201",
                 "Success",
@@ -35,9 +34,15 @@ public class UserController {
                 token.getToken());
     }
 
-    @PatchMapping(value = "/confirm")
+    @GetMapping
+    String getTestMapper(@RequestParam(name = "id") String id){
+        return "{ 'id' : '" + id + "' }";
+    }
+
+    @PatchMapping
     public UserConfirmationResponse confirmUser(@RequestParam String token) throws TokenNotFoundException, TokenExpiredException {
 
+        System.out.println("Hello darkness");
         userService.confirmUser(token, Timestamp.from(Instant.now()));
 
         return new UserConfirmationResponse(
