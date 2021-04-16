@@ -19,9 +19,9 @@ import java.sql.Timestamp;
 public class Entry {
 
     @Id
-    private final String id;
+    private String id;
     @ManyToOne(targetEntity = User.class)
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(referencedColumnName = "username")
     @NotNull
     private final User username;
     @Enumerated(EnumType.STRING)
