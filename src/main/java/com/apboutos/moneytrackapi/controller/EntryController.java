@@ -1,6 +1,6 @@
 package com.apboutos.moneytrackapi.controller;
 
-import com.apboutos.moneytrackapi.controller.Response.EntryPostResponse;
+import com.apboutos.moneytrackapi.controller.Response.EntriesPutResponse;
 import com.apboutos.moneytrackapi.model.Entry;
 import com.apboutos.moneytrackapi.service.EntryService;
 import lombok.AllArgsConstructor;
@@ -19,9 +19,9 @@ public class EntryController {
     private final EntryService entryService;
 
     @PutMapping
-    EntryPostResponse saveEntries(@RequestBody List<Entry> entries){
+    EntriesPutResponse saveEntries(@RequestBody List<Entry> entries){
 
         List<List<Entry>> updateResults = entryService.saveEntries(entries);
-        return new EntryPostResponse("201","Success","Entries updated." , updateResults.get(0),updateResults.get(1),updateResults.get(2));
+        return new EntriesPutResponse("201","Success","Entries updated." , updateResults.get(0),updateResults.get(1),updateResults.get(2));
     }
 }
