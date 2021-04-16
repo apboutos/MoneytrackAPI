@@ -23,12 +23,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-        .authorizeRequests().antMatchers(HttpMethod.POST,"API/User/").permitAll();
-        //.anyRequest().authenticated().and().formLogin();
+        .authorizeRequests().antMatchers(HttpMethod.POST,"/api/v1/users").permitAll()
+        .antMatchers(HttpMethod.PATCH,"/api/v1/users").permitAll()
+        .anyRequest().authenticated().and().httpBasic();
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(daoAuthenticationProvider());
     }
 
