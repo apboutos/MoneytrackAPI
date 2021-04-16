@@ -42,14 +42,6 @@ public class Entry {
     @NotNull
     private Boolean isDeleted;
 
-
-
-
-
-
-
-
-
     public enum Type{
         Income,Expense
     }
