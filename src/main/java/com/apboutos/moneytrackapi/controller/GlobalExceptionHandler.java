@@ -14,17 +14,15 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.sql.Timestamp;
 import java.time.Instant;
 
-import static com.apboutos.moneytrackapi.service.EmailConfirmationTokenService.*;
-
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UsernameTakenException.class)
     ResponseEntity<Object> handleUserNotSavedException(UsernameTakenException exception, WebRequest webRequest){
         return handleExceptionInternal(exception,
-                new UserRegistrationResponse("409","Failure","Username is taken.",Timestamp.from(Instant.now()),null),
+                new UserRegistrationResponse("405","Failure","Username is taken.",Timestamp.from(Instant.now()),null),
                 new HttpHeaders(),
-                HttpStatus.CONFLICT,
+                HttpStatus.METHOD_NOT_ALLOWED,
                 webRequest
         );
     }
@@ -32,9 +30,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EmailTakenException.class)
     ResponseEntity<Object> handleUserNotSavedException(EmailTakenException exception, WebRequest webRequest){
         return handleExceptionInternal(exception,
-                new UserRegistrationResponse("409","Failure","e-mail is taken.",Timestamp.from(Instant.now()),null),
+                new UserRegistrationResponse("405","Failure","e-mail is taken.",Timestamp.from(Instant.now()),null),
                 new HttpHeaders(),
-                HttpStatus.CONFLICT,
+                HttpStatus.METHOD_NOT_ALLOWED,
                 webRequest
         );
     }
