@@ -28,7 +28,7 @@ public class EntryDTO {
         return new EntryDTO(entry.getId(),
                 entry.getUsername().getUsername(),
                 entry.getType(),
-                entry.getCategory().getName(),
+                entry.getCategory().getId().getName(),
                 entry.getDescription(),
                 entry.getAmount(),
                 entry.getCreatedAt(),

@@ -28,8 +28,6 @@ public class User implements UserDetails {
     private String username;
     @Size(min = 60, max = 60)
     private String password;
-    @Email
-    private String email;
     private Timestamp registrationDate;
     private Timestamp lastLogin;
 
@@ -38,12 +36,13 @@ public class User implements UserDetails {
     private Boolean locked = false;
     private Boolean enabled = false;
 
-    public User(String username,
-                   String password,
-                   String email) {
+    @ManyToMany
+    @JoinTable(name = "user_categories", joinColumns = @JoinColumn(name = "username"), inverseJoinColumns = {@JoinColumn(name = "name"),@JoinColumn(name = "type")})
+    private Set<Category> categories;
+
+    public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.email = email;
     }
 
 
@@ -83,11 +82,11 @@ public class User implements UserDetails {
         return enabled;
     }
 
+
     public Boolean confirmProperDatabaseSave(User databaseSavedUser){
 
         return this.username.equals(databaseSavedUser.getUsername()) &&
                 this.password.equals(databaseSavedUser.getPassword()) &&
-                this.email.equals(databaseSavedUser.getEmail()) &&
                 this.registrationDate.equals(databaseSavedUser.registrationDate) &&
                 this.userRole.equals(databaseSavedUser.userRole) &&
                 this.locked.equals(databaseSavedUser.locked) &&
