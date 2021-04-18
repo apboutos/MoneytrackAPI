@@ -17,7 +17,7 @@ public class RandomTests {
     public void testTimestamp(){
 
         User user = new User();
-        System.out.println(user.getId());
+        System.out.println(user.getUsername());
         System.out.println(Timestamp.from(Instant.now()));
     }
 
