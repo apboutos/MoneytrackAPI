@@ -26,7 +26,7 @@ public class UserService implements UserDetailsService {
     private final static String USER_NOT_FOUND_MSG = "User with username %s not found";
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailConfirmationTokenService emailConfirmationTokenService;
-    private final EmailSender emailSender;
+    //private final EmailSender emailSender;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -35,9 +35,9 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public EmailConfirmationToken registerUser(UserRegistrationRequest request) throws UserNotSavedException,UsernameTakenException,EmailTakenException {
+    public EmailConfirmationToken registerUser(UserRegistrationRequest request) throws UserNotSavedException,UsernameTakenException {
 
-        User user = new User(request.getUsername(), passwordEncoder.encode(request.getPassword()), request.getEmail());
+        User user = new User(request.getUsername(), passwordEncoder.encode(request.getPassword()));
         user.setRegistrationDate(Timestamp.from(Instant.now()));
         user.setUserRole(User.UserRole.USER);
 
