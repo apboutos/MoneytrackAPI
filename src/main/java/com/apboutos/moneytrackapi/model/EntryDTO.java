@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.sql.Date;
-import java.sql.Time;
 import java.sql.Timestamp;
 
 import static com.apboutos.moneytrackapi.model.Entry.*;
 
+@SuppressWarnings("unused")
 @Data
 @AllArgsConstructor
 public class EntryDTO {
