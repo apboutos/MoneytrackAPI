@@ -12,6 +12,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+
+
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
@@ -25,6 +27,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
         .authorizeRequests().antMatchers(HttpMethod.POST,"/api/v1/users").permitAll()
         .antMatchers(HttpMethod.PATCH,"/api/v1/users").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/v1/categories").hasAuthority("USER")
         .anyRequest().authenticated().and().httpBasic();
     }
 
