@@ -21,7 +21,7 @@ public class CategoryService {
         List<Category> categories = repository.findCategoriesByUser(username);
 
         return categories.stream()
-                .map((category -> new CategoryDTO(category.getId().getName(),category.getId().getType(), username)))
+                .map((category -> new CategoryDTO(category.getId().getName(),category.getId().getType())))
                 .collect(Collectors.toList());
     }
 }

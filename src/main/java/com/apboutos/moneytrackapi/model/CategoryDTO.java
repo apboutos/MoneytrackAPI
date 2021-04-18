@@ -9,6 +9,5 @@ public class CategoryDTO {
 
     private final String name;
     private final Type type;
-    private final String username;
 
 }
