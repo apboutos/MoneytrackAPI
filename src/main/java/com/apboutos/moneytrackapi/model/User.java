@@ -1,10 +1,7 @@
 package com.apboutos.moneytrackapi.model;
 
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +16,8 @@ import static com.apboutos.moneytrackapi.model.User.UserRolePermission.*;
 
 @Entity
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class User implements UserDetails {
 
     @Id
@@ -50,6 +48,24 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRole.name());
         return Collections.singletonList(authority);
+    }
+
+    /*
+        We cannot use lombok default implementation of equals and hashcode because lombok uses the list of categories
+        inside the hashcode implementation, and this creates a stackoverflow error due to recursive call of hashcode
+        between User and Category.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(registrationDate, user.registrationDate) && Objects.equals(lastLogin, user.lastLogin) && userRole == user.userRole && Objects.equals(locked, user.locked) && Objects.equals(enabled, user.enabled);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, password, registrationDate, lastLogin, userRole, locked, enabled);
     }
 
     @Override
