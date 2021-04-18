@@ -1,7 +1,6 @@
 package com.apboutos.moneytrackapi.repository;
 
 import com.apboutos.moneytrackapi.model.User;
-import org.hibernate.sql.Update;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,11 +11,7 @@ import java.util.Optional;
 
 @SuppressWarnings("unused")
 @Repository
-public interface UserRepository extends JpaRepository<User,Long> {
-
-
-    @Override
-    Optional<User> findById(Long id);
+public interface UserRepository extends JpaRepository<User,String> {
 
     Optional<User> findByUsername(String username);
 
