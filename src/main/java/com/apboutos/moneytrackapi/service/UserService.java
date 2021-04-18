@@ -44,9 +44,6 @@ public class UserService implements UserDetailsService {
         if (repository.findByUsername(user.getUsername()).isPresent()) {
             throw new UsernameTakenException();
         }
-        if (repository.findByEmail(user.getEmail()).isPresent()) {
-            throw new EmailTakenException();
-        }
 
         User databaseSavedUser = repository.save(user);
         if (!user.confirmProperDatabaseSave(databaseSavedUser)) {
@@ -72,6 +69,6 @@ public class UserService implements UserDetailsService {
 
         EmailConfirmationToken confirmedToken = emailConfirmationTokenService.validateEmailConfirmationToken(token,confirmedAt);
 
-        repository.enableUser(confirmedToken.getUser().getId());
+        repository.enableUser(confirmedToken.getUser().getUsername());
     }
 }

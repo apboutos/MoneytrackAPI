@@ -26,7 +26,7 @@ public class EmailConfirmationToken {
     private Timestamp expiresAt;
     private Timestamp confirmedAt;
     @ManyToOne(targetEntity = User.class)
-    @JoinColumn(nullable = false,referencedColumnName = "id")
+    @JoinColumn(nullable = false,referencedColumnName = "username")
     private User user;
 
     public EmailConfirmationToken(String token,User user,Timestamp createdAt, Timestamp expiresAt){

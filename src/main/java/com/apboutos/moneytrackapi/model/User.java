@@ -23,13 +23,8 @@ import static com.apboutos.moneytrackapi.model.User.UserRolePermission.*;
 public class User implements UserDetails {
 
     @Id
-    @SequenceGenerator(name = "UserSequence",
-            sequenceName = "UserSequence",
-            allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,
-            generator = "UserSequence")
-    private Long id;
-    @Size(max = 45)
+    @Email
+    @Size(max = 100)
     private String username;
     @Size(min = 60, max = 60)
     private String password;

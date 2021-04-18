@@ -18,11 +18,9 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Override
     Optional<User> findById(Long id);
 
-    Optional<User> findByEmail(String email);
-
     Optional<User> findByUsername(String username);
 
     @Modifying
-    @Query("UPDATE User u SET u.enabled = true WHERE u.id = :id")
-    void enableUser(@Param(value = "id") Long id);
+    @Query("UPDATE User u SET u.enabled = true WHERE u.username = :username")
+    void enableUser(@Param(value = "username") String username);
 }
