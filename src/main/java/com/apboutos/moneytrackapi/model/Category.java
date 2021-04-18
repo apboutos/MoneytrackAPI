@@ -20,8 +20,8 @@ public class Category {
     private CategoryId id;
     private final Timestamp createdAt = Timestamp.from(Instant.now());
 
-    //@ManyToMany(mappedBy = "categories")
-    //private Set<User> users;
+    @ManyToMany(mappedBy = "categories")
+    private Set<User> users;
 
     public Category(CategoryId id){
         this.id = id;
