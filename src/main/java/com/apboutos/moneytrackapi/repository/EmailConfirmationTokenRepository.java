@@ -16,7 +16,7 @@ public interface EmailConfirmationTokenRepository extends JpaRepository<EmailCon
 
     Optional<EmailConfirmationToken> findByToken(String token);
 
-    @Modifying
+    @Modifying(clearAutomatically = true,flushAutomatically = true)
     @Query("UPDATE EmailConfirmationToken token SET token.confirmedAt = :confirmedAt WHERE token.id = :id")
     void updateTokenConfirmationTimestamp(@Param(value = "id") Long id , @Param(value = "confirmedAt")Timestamp confirmedAt);
 
