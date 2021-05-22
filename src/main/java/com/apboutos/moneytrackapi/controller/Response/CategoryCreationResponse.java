@@ -1,5 +1,6 @@
 package com.apboutos.moneytrackapi.controller.Response;
 
+import com.apboutos.moneytrackapi.model.CategoryDTO;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,5 +17,5 @@ public class CategoryCreationResponse {
     private final String result;
     private final String message;
     private final Timestamp timestamp;
-
+    private final CategoryDTO category;
 }
