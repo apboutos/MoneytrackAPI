@@ -3,11 +3,12 @@ package com.apboutos.moneytrackapi.controller;
 import com.apboutos.moneytrackapi.model.CategoryDTO;
 import com.apboutos.moneytrackapi.service.CategoryService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -21,5 +22,12 @@ public class CategoryController {
     public List<CategoryDTO> getAllCategories(Authentication authentication){
 
         return categoryService.getAllCategoriesOfUser(authentication.getName());
+    }
+
+    @PostMapping
+    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO, Authentication authentication){
+
+        var dto = categoryService.createCategory(categoryDTO, authentication.getName());
+        return new ResponseEntity<>(dto,HttpStatus.OK);
     }
 }
