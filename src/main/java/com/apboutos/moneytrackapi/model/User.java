@@ -36,8 +36,7 @@ public class User implements UserDetails {
     private Boolean locked = false;
     private Boolean enabled = false;
 
-    @ManyToMany
-    @JoinTable(name = "user_categories", joinColumns = @JoinColumn(name = "username"), inverseJoinColumns = {@JoinColumn(name = "name"),@JoinColumn(name = "type")})
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Category> categories;
 
     public User(String username, String password) {
