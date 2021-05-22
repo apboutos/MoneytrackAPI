@@ -1,5 +1,6 @@
 package com.apboutos.moneytrackapi.controller;
 
+import com.apboutos.moneytrackapi.controller.Response.CategoryCreationResponse;
 import com.apboutos.moneytrackapi.controller.exception.CategoryExistsException;
 import com.apboutos.moneytrackapi.model.CategoryDTO;
 import com.apboutos.moneytrackapi.service.CategoryService;
@@ -10,6 +11,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static java.sql.Timestamp.from;
+import static java.time.Instant.now;
 
 @RestController
 @RequestMapping(value = "api/v1/categories",produces = "application/json")
@@ -25,9 +29,9 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO, Authentication authentication) throws CategoryExistsException {
+    public ResponseEntity<CategoryCreationResponse> createCategory(@RequestBody CategoryDTO categoryDTO, Authentication authentication) throws CategoryExistsException {
 
         var dto = categoryService.createCategory(categoryDTO, authentication.getName());
-        return new ResponseEntity<>(dto,HttpStatus.OK);
+        return new ResponseEntity<>(new CategoryCreationResponse(HttpStatus.CREATED,"Success","Category created", from(now()),dto),HttpStatus.CREATED);
     }
 }
