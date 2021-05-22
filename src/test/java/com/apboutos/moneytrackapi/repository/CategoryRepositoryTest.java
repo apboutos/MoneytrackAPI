@@ -27,11 +27,14 @@ class CategoryRepositoryTest {
     void findCategoryById() {
 
         //given
-        Category expectedCategory = new Category(new CategoryId("TestCategory", Entry.Type.Income));
+        User testUser = new User("username@test.com","123456789012345678901234567890123456789012345678901234567890");
+        userRepository.save(testUser);
+
+        Category expectedCategory = new Category("TestCategory", Entry.Type.Income,testUser);
         categoryRepositoryUnderTest.save(expectedCategory);
         //when
         Optional<Category> actual = categoryRepositoryUnderTest.findCategoryById(expectedCategory.getId());
-        Optional<Category> actual2 = categoryRepositoryUnderTest.findCategoryById(new CategoryId("NotExistingCategory", Entry.Type.Income));
+        Optional<Category> actual2 = categoryRepositoryUnderTest.findCategoryById(new CategoryId("NotExistingCategory", Entry.Type.Income,testUser.getUsername()));
 
         //then
         assertThat(actual).contains(expectedCategory);
@@ -42,24 +45,22 @@ class CategoryRepositoryTest {
 
         //given
         User testUser = new User("username@test.com","123456789012345678901234567890123456789012345678901234567890");
+        userRepository.save(testUser);
 
         Set<Category> testCategoriesSet = new HashSet<>();
-        Category category1 = new Category(new CategoryId("Category1", Entry.Type.Income));
-        Category category2 = new Category(new CategoryId("Category2", Entry.Type.Income));
-        Category category3 = new Category(new CategoryId("Category3", Entry.Type.Expense));
+        Category category1 = new Category("TestCategory", Entry.Type.Income,testUser);
+        Category category2 = new Category("TestCategory", Entry.Type.Income,testUser);
+        Category category3 = new Category("TestCategory", Entry.Type.Income,testUser);
         testCategoriesSet.add(category1);
         testCategoriesSet.add(category2);
         testCategoriesSet.add(category3);
-        testUser.setCategories(testCategoriesSet);
 
         categoryRepositoryUnderTest.save(category1);
         categoryRepositoryUnderTest.save(category2);
         categoryRepositoryUnderTest.save(category3);
 
-        userRepository.save(testUser);
-
         //when
-        List<Category> actualCategories = categoryRepositoryUnderTest.findCategoriesByUser("username@test.com");
+        List<Category> actualCategories = categoryRepositoryUnderTest.findCategoriesByUser(testUser);
 
         //then
         assertThat(new HashSet<>(actualCategories)).isEqualTo(testCategoriesSet);
