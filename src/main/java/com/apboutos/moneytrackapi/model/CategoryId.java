@@ -1,10 +1,7 @@
 package com.apboutos.moneytrackapi.model;
 
 import com.apboutos.moneytrackapi.model.Entry.Type;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
@@ -15,6 +12,7 @@ import java.io.Serializable;
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(of = {"name","type"})
 public class CategoryId implements Serializable {
 
     private String name;

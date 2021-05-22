@@ -14,6 +14,7 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @Setter
 @Getter
+@EqualsAndHashCode(of = {"id","createdAt"})
 public class Category {
 
     @EmbeddedId
@@ -32,7 +33,7 @@ public class Category {
         inside the hashcode implementation, and this creates a stackoverflow error due to recursive call of hashcode
         between User and Category.
      */
-
+    /*
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -49,5 +50,5 @@ public class Category {
         hash = 31 * hash + (createdAt == null ? 0 : createdAt.hashCode());
 
         return hash;
-    }
+    }*/
 }
