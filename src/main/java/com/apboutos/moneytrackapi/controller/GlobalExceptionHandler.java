@@ -64,4 +64,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.NOT_ACCEPTABLE,
                 webRequest);
     }
+
+    @ExceptionHandler(CategoryExistsException.class)
+    ResponseEntity<Object> handleCategoryExistsException(CategoryExistsException exception, WebRequest webRequest){
+        return handleExceptionInternal(exception,
+                new UserConfirmationResponse("409","Failure","Category already exists.", Timestamp.from(Instant.now())),
+                new HttpHeaders(),
+                HttpStatus.CONFLICT,
+                webRequest);
+    }
 }
