@@ -7,6 +7,8 @@ import com.apboutos.moneytrackapi.controller.exception.*;
 import com.apboutos.moneytrackapi.model.EmailConfirmationToken;
 import lombok.AllArgsConstructor;
 import com.apboutos.moneytrackapi.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -23,32 +25,26 @@ public class UserController {
 
 
     @PostMapping
-    UserRegistrationResponse postUser(@RequestBody UserRegistrationRequest request) throws UsernameTakenException, EmailTakenException, UserNotSavedException {
+    ResponseEntity<UserRegistrationResponse> postUser(@RequestBody UserRegistrationRequest request) throws UsernameTakenException, UserNotSavedException {
 
         EmailConfirmationToken token = userService.registerUser(request);
-        return new UserRegistrationResponse(
-                "201",
+        return new ResponseEntity<>(new UserRegistrationResponse(
+                HttpStatus.CREATED,
                 "Success",
                 "User created, but not enabled until e-mail confirmation.",
                 Timestamp.from(Instant.now()),
-                token.getToken());
-    }
-
-    @GetMapping
-    String getTestMapper(@RequestParam(name = "id") String id){
-        return "{ 'id' : '" + id + "' }";
+                token.getToken()),HttpStatus.CREATED);
     }
 
     @PatchMapping
-    public UserConfirmationResponse confirmUser(@RequestParam String token) throws TokenNotFoundException, TokenExpiredException {
+    public ResponseEntity<UserConfirmationResponse> confirmUser(@RequestParam String token) throws TokenNotFoundException, TokenExpiredException {
 
-        System.out.println("Hello darkness");
         userService.confirmUser(token, Timestamp.from(Instant.now()));
 
-        return new UserConfirmationResponse(
-                "200",
+        return new ResponseEntity<>(new UserConfirmationResponse(
+                HttpStatus.OK,
                 "Success",
                 "Email confirmed. User enabled.",
-                Timestamp.from(Instant.now()));
+                Timestamp.from(Instant.now())),HttpStatus.OK);
     }
 }
