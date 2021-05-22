@@ -20,7 +20,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UsernameTakenException.class)
     ResponseEntity<Object> handleUserNotSavedException(UsernameTakenException exception, WebRequest webRequest){
         return handleExceptionInternal(exception,
-                new UserRegistrationResponse("405","Failure","Username is taken.",Timestamp.from(Instant.now()),null),
+                new UserRegistrationResponse(HttpStatus.CONFLICT,"Failure","Username is taken.",Timestamp.from(Instant.now()),null),
                 new HttpHeaders(),
                 HttpStatus.METHOD_NOT_ALLOWED,
                 webRequest
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EmailTakenException.class)
     ResponseEntity<Object> handleUserNotSavedException(EmailTakenException exception, WebRequest webRequest){
         return handleExceptionInternal(exception,
-                new UserRegistrationResponse("405","Failure","e-mail is taken.",Timestamp.from(Instant.now()),null),
+                new UserRegistrationResponse(HttpStatus.CONFLICT,"Failure","e-mail is taken.",Timestamp.from(Instant.now()),null),
                 new HttpHeaders(),
                 HttpStatus.METHOD_NOT_ALLOWED,
                 webRequest
@@ -40,7 +40,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UserNotSavedException.class)
     ResponseEntity<Object> handleUserNotSavedException(UserNotSavedException exception, WebRequest webRequest){
         return handleExceptionInternal(exception,
-                new UserRegistrationResponse("500","Failure","User not created due to internal error.",Timestamp.from(Instant.now()),null),
+                new UserRegistrationResponse(HttpStatus.INTERNAL_SERVER_ERROR,"Failure","User not created due to internal error.",Timestamp.from(Instant.now()),null),
                 new HttpHeaders(),
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 webRequest
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(TokenNotFoundException.class)
     ResponseEntity<Object> handleTokenNotFoundException(TokenNotFoundException exception , WebRequest webRequest){
         return handleExceptionInternal(exception,
-                new UserConfirmationResponse("406","Failure","Token is invalid.", Timestamp.from(Instant.now())),
+                new UserConfirmationResponse(HttpStatus.NOT_FOUND,"Failure","Token is invalid.", Timestamp.from(Instant.now())),
                 new HttpHeaders(),
                 HttpStatus.NOT_ACCEPTABLE,
                 webRequest);
@@ -59,7 +59,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(TokenExpiredException.class)
     ResponseEntity<Object> handleTokenExpiredException(TokenExpiredException exception, WebRequest webRequest){
         return handleExceptionInternal(exception,
-                new UserConfirmationResponse("406","Failure","Token has expired.", Timestamp.from(Instant.now())),
+                new UserConfirmationResponse(HttpStatus.GONE,"Failure","Token has expired.", Timestamp.from(Instant.now())),
                 new HttpHeaders(),
                 HttpStatus.NOT_ACCEPTABLE,
                 webRequest);
@@ -68,7 +68,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(CategoryExistsException.class)
     ResponseEntity<Object> handleCategoryExistsException(CategoryExistsException exception, WebRequest webRequest){
         return handleExceptionInternal(exception,
-                new UserConfirmationResponse("409","Failure","Category already exists.", Timestamp.from(Instant.now())),
+                new UserConfirmationResponse(HttpStatus.CONFLICT,"Failure","Category already exists.", Timestamp.from(Instant.now())),
                 new HttpHeaders(),
                 HttpStatus.CONFLICT,
                 webRequest);
