@@ -9,13 +9,18 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@SuppressWarnings("unused")
 @Repository
 public interface UserRepository extends JpaRepository<User,String> {
 
+
     Optional<User> findByUsername(String username);
 
-    @Modifying
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("UPDATE User u SET u.enabled = true WHERE u.username = :username")
     void enableUser(@Param(value = "username") String username);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("UPDATE User u SET u.password = :password WHERE u.username = :username")
+    void updatePassword(@Param(value = "password") String password, @Param(value = "username") String username);
+
 }
