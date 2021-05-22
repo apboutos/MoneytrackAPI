@@ -5,9 +5,9 @@ import lombok.*;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Set;
+import java.util.List;
 
-
+import static com.apboutos.moneytrackapi.model.Entry.Type;
 
 
 @Entity
@@ -22,11 +22,16 @@ public class Category {
     private CategoryId id;
     private final Timestamp createdAt = Timestamp.from(Instant.now());
 
-    @ManyToMany(mappedBy = "categories")
-    private Set<User> users;
+    @ManyToOne(targetEntity = User.class)
+    @JoinColumn(referencedColumnName = "username")
+    private final User user;
 
-    public Category(CategoryId id){
-        this.id = id;
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "category")
+    private List<Entry> entries;
+
+    public Category(String name, Type type, User user){
+        this.id = new CategoryId(name,type,user.getUsername());
+        this.user = user;
     }
 
 }
