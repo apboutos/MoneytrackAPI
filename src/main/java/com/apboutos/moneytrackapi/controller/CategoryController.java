@@ -1,5 +1,6 @@
 package com.apboutos.moneytrackapi.controller;
 
+import com.apboutos.moneytrackapi.controller.exception.CategoryExistsException;
 import com.apboutos.moneytrackapi.model.CategoryDTO;
 import com.apboutos.moneytrackapi.service.CategoryService;
 import lombok.AllArgsConstructor;
@@ -8,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -25,7 +25,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO, Authentication authentication){
+    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO, Authentication authentication) throws CategoryExistsException {
 
         var dto = categoryService.createCategory(categoryDTO, authentication.getName());
         return new ResponseEntity<>(dto,HttpStatus.OK);
