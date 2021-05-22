@@ -39,7 +39,6 @@ class UserRepositoryTest {
 
         //when
         userRepositoryUnderTest.enableUser("testUser@test.com");
-        //userRepositoryUnderTest.updatePassword("000000000000000000000000000000000000000000000000000000000000","testUser@test.com");
         Optional<User> actual = userRepositoryUnderTest.findByUsername("testUser@test.com");
 
 
