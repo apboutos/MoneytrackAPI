@@ -14,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @Setter
 @Getter
-@EqualsAndHashCode(of = {"id","createdAt"})
+@EqualsAndHashCode(of = {"id"})
 public class Category {
 
     @EmbeddedId
