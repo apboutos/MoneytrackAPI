@@ -15,6 +15,7 @@ import java.util.Set;
 @Setter
 @Getter
 @EqualsAndHashCode(of = {"id"})
+@ToString(of = {"id"})
 public class Category {
 
     @EmbeddedId

@@ -19,6 +19,7 @@ import static com.apboutos.moneytrackapi.model.User.UserRolePermission.*;
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"username"})
+@ToString(of = {"username","password","enabled","lastLogin"})
 public class User implements UserDetails {
 
     @Id
