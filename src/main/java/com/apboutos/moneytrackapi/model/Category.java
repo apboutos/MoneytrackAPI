@@ -23,7 +23,7 @@ public class Category {
     private final Timestamp createdAt = Timestamp.from(Instant.now());
 
     @ManyToOne(targetEntity = User.class)
-    @JoinColumn(referencedColumnName = "username")
+    @JoinColumn(name = "user_username" ,referencedColumnName = "username")
     private final User user;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "category")
