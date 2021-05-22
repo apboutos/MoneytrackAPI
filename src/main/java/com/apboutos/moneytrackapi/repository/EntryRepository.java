@@ -18,8 +18,8 @@ public interface EntryRepository extends JpaRepository<Entry, String> {
 
     Optional<Entry> findEntryById(String id);
 
-    @Modifying
-    @Query(value = "UPDATE Entry e SET e.id = :id, e.username = :username, e.type = :type, e.category = :category, e.description = :description, e.amount = :amount, " +
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query(value = "UPDATE Entry e SET e.username = :username, e.type = :type, e.category = :category, e.description = :description, e.amount = :amount, " +
             "e.createdAt = :date, e.lastUpdate = :lastUpdate, e.isDeleted =:isDeleted WHERE e.id =:id")
     void update(@Param("id") String id,
                 @Param("username") User username,
