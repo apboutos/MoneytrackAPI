@@ -1,40 +1,36 @@
 package com.apboutos.moneytrackapi.controller.dto;
 
-import com.apboutos.moneytrackapi.model.Entry;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-import static com.apboutos.moneytrackapi.model.Entry.*;
+import static com.apboutos.moneytrackapi.model.Entry.Type;
 
 @SuppressWarnings("unused")
 @Data
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class EntryDTO {
 
-    private String id;
-    private String username;
-    private Type type;
-    private String category;
-    private String description;
-    private Double amount;
-    private Date date;
-    private Timestamp lastUpdate;
-    private Boolean isDeleted;
+    @NotBlank
+    private final String id;
+    @NotNull
+    private final Type type;
+    @NotBlank
+    private final String category;
+    @NotBlank
+    private final String description;
+    @NotNull
+    private final Double amount;
+    @NotNull
+    private final Date date;
+    @NotNull
+    private final Timestamp lastUpdate;
+    @NotNull
+    private final Boolean isDeleted;
 
-    public static EntryDTO createDTOFromEntry(Entry entry){
-
-        return new EntryDTO(entry.getId(),
-                entry.getUsername().getUsername(),
-                entry.getType(),
-                entry.getCategory().getId().getName(),
-                entry.getDescription(),
-                entry.getAmount(),
-                entry.getCreatedAt(),
-                entry.getLastUpdate(),
-                entry.getIsDeleted());
-    }
 }
 
