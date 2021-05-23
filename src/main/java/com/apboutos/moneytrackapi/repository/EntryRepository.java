@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,9 +19,11 @@ public interface EntryRepository extends JpaRepository<Entry, String> {
 
     Optional<Entry> findEntryById(String id);
 
+    List<Entry> findEntriesByUsernameAndLastUpdateAfter(User user, Timestamp lastPullRequestTimeStamp);
+
+    //TODO update method has a bug that does not update the Category properly
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query(value = "UPDATE Entry e SET e.username = :username, e.type = :type, e.category = :category, e.description = :description, e.amount = :amount, " +
-            "e.createdAt = :date, e.lastUpdate = :lastUpdate, e.isDeleted =:isDeleted WHERE e.id =:id")
+    @Query(value = "UPDATE Entry e SET e.username = :username, e.type = :type, e.category = :category, e.description = :description, e.amount = :amount, e.createdAt = :date, e.lastUpdate = :lastUpdate, e.isDeleted = :isDeleted WHERE e.id = :id")
     void update(@Param("id") String id,
                 @Param("username") User username,
                 @Param("type") Entry.Type type,
