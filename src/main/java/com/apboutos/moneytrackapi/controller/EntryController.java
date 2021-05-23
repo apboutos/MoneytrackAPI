@@ -1,27 +1,31 @@
 package com.apboutos.moneytrackapi.controller;
 
-import com.apboutos.moneytrackapi.controller.Response.EntriesPutResponse;
-import com.apboutos.moneytrackapi.model.Entry;
+import com.apboutos.moneytrackapi.controller.Response.CreateEntriesResponse;
+import com.apboutos.moneytrackapi.controller.dto.EntryDTO;
 import com.apboutos.moneytrackapi.service.EntryService;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping(value = "/api/v1/entries", produces = "application/json")
 @AllArgsConstructor
 public class EntryController {
 
     private final EntryService entryService;
 
-    @PutMapping
-    EntriesPutResponse saveEntries(@RequestBody List<Entry> entries){
+    @PostMapping
+    ResponseEntity<CreateEntriesResponse> createEntries(@Valid @RequestBody List<EntryDTO> entries, Authentication authentication) {
 
-        List<List<Entry>> updateResults = entryService.saveEntries(entries);
-        return new EntriesPutResponse("201","Success","Entries updated." , updateResults.get(0),updateResults.get(1),updateResults.get(2));
+        CreateEntriesResponse response = entryService.saveEntries(entries,authentication.getName());
+        return new ResponseEntity<>(response,response.getStatus());
     }
+
 }
