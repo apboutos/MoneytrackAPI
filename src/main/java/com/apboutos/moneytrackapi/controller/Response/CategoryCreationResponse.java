@@ -1,6 +1,6 @@
 package com.apboutos.moneytrackapi.controller.Response;
 
-import com.apboutos.moneytrackapi.model.CategoryDTO;
+import com.apboutos.moneytrackapi.controller.dto.CategoryDTO;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

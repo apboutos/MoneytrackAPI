@@ -2,7 +2,7 @@ package com.apboutos.moneytrackapi.service;
 
 import com.apboutos.moneytrackapi.controller.exception.CategoryExistsException;
 import com.apboutos.moneytrackapi.model.Category;
-import com.apboutos.moneytrackapi.model.CategoryDTO;
+import com.apboutos.moneytrackapi.controller.dto.CategoryDTO;
 import com.apboutos.moneytrackapi.model.User;
 import com.apboutos.moneytrackapi.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
