@@ -1,49 +1,97 @@
 package com.apboutos.moneytrackapi.service;
 
+import com.apboutos.moneytrackapi.controller.Response.CreateEntriesResponse;
 import com.apboutos.moneytrackapi.model.Category;
+import com.apboutos.moneytrackapi.model.CategoryId;
 import com.apboutos.moneytrackapi.model.Entry;
-import com.apboutos.moneytrackapi.model.EntryDTO;
+import com.apboutos.moneytrackapi.controller.dto.EntryDTO;
 import com.apboutos.moneytrackapi.model.User;
 import com.apboutos.moneytrackapi.repository.CategoryRepository;
 import com.apboutos.moneytrackapi.repository.EntryRepository;
-import com.apboutos.moneytrackapi.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import static java.sql.Timestamp.from;
+import static java.time.Instant.now;
 
 @Service
 @AllArgsConstructor
 public class EntryService {
 
-    private final EntryRepository repository;
-    private final UserRepository userRepository;
+    private final EntryRepository entryRepository;
+    private final UserService userService;
     private final CategoryRepository categoryRepository;
 
 
-    public void saveEntry(EntryDTO entryDTO) throws IllegalArgumentException{
+    public CreateEntriesResponse saveEntries(List<EntryDTO> entries, String username) throws IllegalArgumentException{
 
-        Optional<Entry> savedEntry = repository.findEntryById(entryDTO.getId());
-        if(savedEntry.isEmpty())
-            repository.save(createEntryFromDTO(entryDTO));
-        else if(savedEntry.get().getLastUpdate().before(entryDTO.getLastUpdate())) {
-            Entry entry = createEntryFromDTO(entryDTO);
-            repository.update(entry.getId(),entry.getUsername(),entry.getType(),entry.getCategory(),entry.getDescription(), entry.getAmount(),entry.getCreatedAt(),entry.getLastUpdate(),entry.getIsDeleted());
+        User user = (User) userService.loadUserByUsername(username);
+        List<EntryDTO> savedEntries = new ArrayList<>();
+        List<EntryDTO> conflictingEntriesOnId = new ArrayList<>();
+        List<EntryDTO> conflictingEntriesOnCategory = new ArrayList<>();
+
+        for(EntryDTO entry : entries){
+
+            Optional<Entry> entrySearchResult = entryRepository.findEntryById(entry.getId());
+            if(entrySearchResult.isPresent())
+                conflictingEntriesOnId.add(entry);
+            else {
+                Optional<Category> categorySearchResult = categoryRepository.findCategoryById(new CategoryId(entry.getCategory(),entry.getType(),user.getUsername()));
+                if(categorySearchResult.isEmpty())
+                    conflictingEntriesOnCategory.add(entry);
+                else{
+                    Entry newEntry = entryRepository.save(createEntryFromDTO(entry,user,categorySearchResult.get()));
+                    savedEntries.add(createDTOFromEntry(newEntry));
+                }
+            }
         }
+        if(conflictingEntriesOnId.isEmpty() && conflictingEntriesOnCategory.isEmpty())
+            return new CreateEntriesResponse(
+                    HttpStatus.CREATED,
+                    "Success",
+                    "All entries have been created.",
+                    from(now()),
+                    savedEntries,
+                    conflictingEntriesOnId,
+                    conflictingEntriesOnCategory);
+        else
+            return new CreateEntriesResponse(
+                    HttpStatus.CONFLICT,
+                    "Failure",
+                    "Attempt to create conflicting entries.",
+                    from(now()),
+                    savedEntries,
+                    conflictingEntriesOnId,
+                    conflictingEntriesOnCategory);
     }
 
-    private Entry createEntryFromDTO(EntryDTO entryDTO) throws IllegalArgumentException {
-
-        User user = userRepository.findByUsername(entryDTO.getUsername()).orElseThrow(IllegalArgumentException::new);
-        Category category = categoryRepository.findById(entryDTO.getCategory()).orElseThrow(IllegalArgumentException::new);
-        return new Entry(entryDTO.getId(), user, entryDTO.getType(),category,entryDTO.getDescription(),
-                entryDTO.getAmount(),entryDTO.getDate(),entryDTO.getLastUpdate(),entryDTO.getIsDeleted());
-
+    private Entry createEntryFromDTO(EntryDTO entryDTO, User user,Category category){
+        return new Entry(
+                entryDTO.getId(),
+                user,entryDTO.getType(),
+                category,
+                entryDTO.getDescription(),
+                entryDTO.getAmount(),
+                entryDTO.getDate(),
+                entryDTO.getLastUpdate(),
+                entryDTO.getIsDeleted());
     }
 
+    private EntryDTO createDTOFromEntry(Entry entry){
+        return new EntryDTO(
+                entry.getId(),
+                entry.getType(),
+                entry.getCategory().getId().getName(),
+                entry.getDescription(),
+                entry.getAmount(),
+                entry.getCreatedAt(),
+                entry.getLastUpdate(),
+                entry.getIsDeleted());
+
+    }
 }
