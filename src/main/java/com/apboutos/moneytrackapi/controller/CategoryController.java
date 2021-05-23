@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static java.sql.Timestamp.from;
@@ -29,7 +30,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryCreationResponse> createCategory(@RequestBody CategoryDTO categoryDTO, Authentication authentication) throws CategoryExistsException {
+    public ResponseEntity<CategoryCreationResponse> createCategory(@Valid @RequestBody CategoryDTO categoryDTO, Authentication authentication) throws CategoryExistsException {
 
         var dto = categoryService.createCategory(categoryDTO, authentication.getName());
         return new ResponseEntity<>(new CategoryCreationResponse(HttpStatus.CREATED,"Success","Category created", from(now()),dto),HttpStatus.CREATED);
