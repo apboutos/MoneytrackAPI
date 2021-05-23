@@ -1,4 +1,4 @@
-package com.apboutos.moneytrackapi.model;
+package com.apboutos.moneytrackapi.controller.dto;
 
 import lombok.Data;
 

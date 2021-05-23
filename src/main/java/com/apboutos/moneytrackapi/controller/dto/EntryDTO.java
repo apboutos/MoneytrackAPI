@@ -1,5 +1,6 @@
-package com.apboutos.moneytrackapi.model;
+package com.apboutos.moneytrackapi.controller.dto;
 
+import com.apboutos.moneytrackapi.model.Entry;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
