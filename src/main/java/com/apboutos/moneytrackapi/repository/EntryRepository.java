@@ -21,6 +21,9 @@ public interface EntryRepository extends JpaRepository<Entry, String> {
 
     List<Entry> findEntriesByUsernameAndLastUpdateAfter(User user, Timestamp lastPullRequestTimeStamp);
 
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    void deleteEntryById(String id);
+
     //TODO update method has a bug that does not update the Category properly
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(value = "UPDATE Entry e SET e.username = :username, e.type = :type, e.category = :category, e.description = :description, e.amount = :amount, e.createdAt = :date, e.lastUpdate = :lastUpdate, e.isDeleted = :isDeleted WHERE e.id = :id")
