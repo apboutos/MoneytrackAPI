@@ -3,6 +3,7 @@ package com.apboutos.moneytrackapi.controller;
 import com.apboutos.moneytrackapi.controller.Response.CreateEntriesResponse;
 import com.apboutos.moneytrackapi.controller.Response.GetEntriesResponse;
 import com.apboutos.moneytrackapi.controller.dto.EntryDTO;
+import com.apboutos.moneytrackapi.repository.EntryRepository;
 import com.apboutos.moneytrackapi.service.EntryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -30,8 +33,11 @@ public class EntryController {
     @GetMapping
     ResponseEntity<GetEntriesResponse> getEntries(@RequestParam("lastPullRequestTimestamp") @NotBlank String lastPullRequestTimestamp, Authentication authentication){
 
-        GetEntriesResponse response = entryService.getEntries(lastPullRequestTimestamp,authentication.getName());
+        LocalDateTime localDateTime = LocalDateTime.parse(lastPullRequestTimestamp);
+        GetEntriesResponse response = entryService.getEntries(Timestamp.valueOf(localDateTime),authentication.getName());
+
         return new ResponseEntity<>(response,response.getStatus());
     }
+
 
 }
