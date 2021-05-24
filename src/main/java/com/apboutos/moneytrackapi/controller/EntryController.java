@@ -1,9 +1,9 @@
 package com.apboutos.moneytrackapi.controller;
 
 import com.apboutos.moneytrackapi.controller.Response.CreateEntriesResponse;
+import com.apboutos.moneytrackapi.controller.Response.DeleteEntriesResponse;
 import com.apboutos.moneytrackapi.controller.Response.GetEntriesResponse;
 import com.apboutos.moneytrackapi.controller.dto.EntryDTO;
-import com.apboutos.moneytrackapi.repository.EntryRepository;
 import com.apboutos.moneytrackapi.service.EntryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -39,5 +39,12 @@ public class EntryController {
         return new ResponseEntity<>(response,response.getStatus());
     }
 
+    @DeleteMapping
+    ResponseEntity<DeleteEntriesResponse> deleteEntries(List<EntryDTO> entries, Authentication authentication){
+
+        DeleteEntriesResponse response = entryService.deleteEntries(entries, authentication.getName());
+
+        return new ResponseEntity<>(response,response.getStatus());
+    }
 
 }
