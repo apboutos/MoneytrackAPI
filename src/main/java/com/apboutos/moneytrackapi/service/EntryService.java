@@ -1,6 +1,7 @@
 package com.apboutos.moneytrackapi.service;
 
 import com.apboutos.moneytrackapi.controller.Response.CreateEntriesResponse;
+import com.apboutos.moneytrackapi.controller.Response.DeleteEntriesResponse;
 import com.apboutos.moneytrackapi.controller.Response.GetEntriesResponse;
 import com.apboutos.moneytrackapi.model.Category;
 import com.apboutos.moneytrackapi.model.CategoryId;
@@ -12,6 +13,7 @@ import com.apboutos.moneytrackapi.repository.EntryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -81,6 +83,22 @@ public class EntryService {
         List<EntryDTO> entries = entriesReturnedBySearch.stream().map(this::createDTOFromEntry).collect(Collectors.toList());
 
         return new GetEntriesResponse(HttpStatus.OK,"Success","Returning entries updated after " + lastPullRequestTimestamp,from(now()),entries);
+    }
+
+    @Transactional
+    public DeleteEntriesResponse deleteEntries(List<EntryDTO> entries){
+
+        List<EntryDTO> conflictingEntries = new ArrayList<>();
+        entries.forEach(e -> {
+            entryRepository.deleteEntryById(e.getId());
+            if(entryRepository.findEntryById(e.getId()).isPresent())
+                conflictingEntries.add(e);
+        });
+
+        if (conflictingEntries.isEmpty())
+            return new DeleteEntriesResponse(HttpStatus.OK,"Success","All entries have been deleted", from(now()),new ArrayList<>());
+        else
+            return new DeleteEntriesResponse(HttpStatus.CONFLICT,"Failure","Some entries could not be deleted", from(now()),conflictingEntries);
     }
 
     private Entry createEntryFromDTO(EntryDTO entryDTO, User user,Category category){
