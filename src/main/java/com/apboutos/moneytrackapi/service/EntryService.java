@@ -1,6 +1,7 @@
 package com.apboutos.moneytrackapi.service;
 
 import com.apboutos.moneytrackapi.controller.Response.CreateEntriesResponse;
+import com.apboutos.moneytrackapi.controller.Response.GetEntriesResponse;
 import com.apboutos.moneytrackapi.model.Category;
 import com.apboutos.moneytrackapi.model.CategoryId;
 import com.apboutos.moneytrackapi.model.Entry;
@@ -12,9 +13,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.sql.Timestamp.from;
 import static java.time.Instant.now;
@@ -68,6 +71,16 @@ public class EntryService {
                     savedEntries,
                     conflictingEntriesOnId,
                     conflictingEntriesOnCategory);
+    }
+
+    public GetEntriesResponse getEntries(Timestamp lastPullRequestTimestamp, String username){
+
+        User user = (User) userService.loadUserByUsername(username);
+
+        List<Entry> entriesReturnedBySearch = entryRepository.findEntriesByUsernameAndLastUpdateAfter(user, lastPullRequestTimestamp);
+        List<EntryDTO> entries = entriesReturnedBySearch.stream().map(this::createDTOFromEntry).collect(Collectors.toList());
+
+        return new GetEntriesResponse(HttpStatus.OK,"Success","Returning entries updated after " + lastPullRequestTimestamp,from(now()),entries);
     }
 
     private Entry createEntryFromDTO(EntryDTO entryDTO, User user,Category category){
