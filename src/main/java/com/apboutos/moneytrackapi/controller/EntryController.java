@@ -40,9 +40,9 @@ public class EntryController {
     }
 
     @DeleteMapping
-    ResponseEntity<DeleteEntriesResponse> deleteEntries(List<EntryDTO> entries, Authentication authentication){
+    ResponseEntity<DeleteEntriesResponse> deleteEntries(@Valid @RequestBody List<EntryDTO> entries){
 
-        DeleteEntriesResponse response = entryService.deleteEntries(entries, authentication.getName());
+        DeleteEntriesResponse response = entryService.deleteEntries(entries);
 
         return new ResponseEntity<>(response,response.getStatus());
     }
