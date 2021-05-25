@@ -3,6 +3,7 @@ package com.apboutos.moneytrackapi.service;
 import com.apboutos.moneytrackapi.controller.Response.CreateEntriesResponse;
 import com.apboutos.moneytrackapi.controller.Response.DeleteEntriesResponse;
 import com.apboutos.moneytrackapi.controller.Response.GetEntriesResponse;
+import com.apboutos.moneytrackapi.controller.Response.UpdateEntriesResponse;
 import com.apboutos.moneytrackapi.model.Category;
 import com.apboutos.moneytrackapi.model.CategoryId;
 import com.apboutos.moneytrackapi.model.Entry;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 import static java.sql.Timestamp.from;
 import static java.time.Instant.now;
 
+@SuppressWarnings("DuplicatedCode")
 @Service
 @AllArgsConstructor
 public class EntryService {
@@ -33,31 +35,31 @@ public class EntryService {
     private final CategoryRepository categoryRepository;
 
 
-    public CreateEntriesResponse saveEntries(List<EntryDTO> entries, String username) throws IllegalArgumentException{
+    public CreateEntriesResponse saveEntries(List<EntryDTO> entries, String username) throws IllegalArgumentException {
 
         User user = (User) userService.loadUserByUsername(username);
         List<EntryDTO> savedEntries = new ArrayList<>();
         List<EntryDTO> conflictingEntriesOnId = new ArrayList<>();
         List<EntryDTO> conflictingEntriesOnCategory = new ArrayList<>();
 
-        for(EntryDTO entry : entries){
+        for (EntryDTO entry : entries) {
 
             Optional<Entry> entrySearchResult = entryRepository.findEntryById(entry.getId());
-            if(entrySearchResult.isPresent())
+            if (entrySearchResult.isPresent())
                 conflictingEntriesOnId.add(entry);
             else {
-                Optional<Category> categorySearchResult = categoryRepository.findCategoryById(new CategoryId(entry.getCategory(),entry.getType(),user.getUsername()));
-                if(categorySearchResult.isEmpty())
+                Optional<Category> categorySearchResult = categoryRepository.findCategoryById(new CategoryId(entry.getCategory(), entry.getType(), user.getUsername()));
+                if (categorySearchResult.isEmpty())
                     conflictingEntriesOnCategory.add(entry);
-                else{
-                    Entry newEntry = entryRepository.save(createEntryFromDTO(entry,user,categorySearchResult.get()));
+                else {
+                    Entry newEntry = entryRepository.save(createEntryFromDTO(entry, user, categorySearchResult.get()));
                     savedEntries.add(createDTOFromEntry(newEntry));
                 }
             }
         }
-        if(conflictingEntriesOnId.isEmpty() && conflictingEntriesOnCategory.isEmpty())
+        if (conflictingEntriesOnId.isEmpty() && conflictingEntriesOnCategory.isEmpty())
             return new CreateEntriesResponse(
-                    HttpStatus.CREATED,
+                    HttpStatus.OK,
                     "Success",
                     "All entries have been created.",
                     from(now()),
@@ -75,36 +77,85 @@ public class EntryService {
                     conflictingEntriesOnCategory);
     }
 
-    public GetEntriesResponse getEntries(Timestamp lastPullRequestTimestamp, String username){
+    public GetEntriesResponse getEntries(Timestamp lastPullRequestTimestamp, String username) {
 
         User user = (User) userService.loadUserByUsername(username);
 
         List<Entry> entriesReturnedBySearch = entryRepository.findEntriesByUsernameAndLastUpdateAfter(user, lastPullRequestTimestamp);
         List<EntryDTO> entries = entriesReturnedBySearch.stream().map(this::createDTOFromEntry).collect(Collectors.toList());
 
-        return new GetEntriesResponse(HttpStatus.OK,"Success","Returning entries updated after " + lastPullRequestTimestamp,from(now()),entries);
+        return new GetEntriesResponse(HttpStatus.OK, "Success", "Returning entries updated after " + lastPullRequestTimestamp, from(now()), entries);
     }
 
     @Transactional
-    public DeleteEntriesResponse deleteEntries(List<EntryDTO> entries){
+    public DeleteEntriesResponse deleteEntries(List<EntryDTO> entries) {
 
         List<EntryDTO> conflictingEntries = new ArrayList<>();
         entries.forEach(e -> {
             entryRepository.deleteEntryById(e.getId());
-            if(entryRepository.findEntryById(e.getId()).isPresent())
+            if (entryRepository.findEntryById(e.getId()).isPresent())
                 conflictingEntries.add(e);
         });
 
         if (conflictingEntries.isEmpty())
-            return new DeleteEntriesResponse(HttpStatus.OK,"Success","All entries have been deleted", from(now()),new ArrayList<>());
+            return new DeleteEntriesResponse(HttpStatus.OK, "Success", "All entries have been deleted", from(now()), new ArrayList<>());
         else
-            return new DeleteEntriesResponse(HttpStatus.CONFLICT,"Failure","Some entries could not be deleted", from(now()),conflictingEntries);
+            return new DeleteEntriesResponse(HttpStatus.CONFLICT, "Failure", "Some entries could not be deleted", from(now()), conflictingEntries);
     }
 
-    private Entry createEntryFromDTO(EntryDTO entryDTO, User user,Category category){
+    @Transactional
+    public UpdateEntriesResponse updateEntries(List<EntryDTO> entries, String username) {
+
+        User user = (User) userService.loadUserByUsername(username);
+        List<EntryDTO> updatedEntries = new ArrayList<>();
+        List<EntryDTO> conflictingEntriesOnId = new ArrayList<>();
+        List<EntryDTO> conflictingEntriesOnCategory = new ArrayList<>();
+        List<EntryDTO> conflictingEntriesOnLastUpdate = new ArrayList<>();
+
+        for (EntryDTO entry : entries) {
+
+            Optional<Entry> result = entryRepository.findEntryById(entry.getId());
+            Optional<Category> categorySearchResult = categoryRepository.findCategoryById(new CategoryId(entry.getCategory(), entry.getType(), user.getUsername()));
+
+            if (result.isEmpty())
+                conflictingEntriesOnId.add(entry);
+            else if (categorySearchResult.isEmpty())
+                conflictingEntriesOnCategory.add(entry);
+            else if (result.get().getLastUpdate().after(entry.getLastUpdate()))
+                conflictingEntriesOnLastUpdate.add(entry);
+            else {
+                entryRepository.deleteEntryById(entry.getId());
+                Entry savedEntry = entryRepository.save(createEntryFromDTO(entry, user, new Category(entry.getCategory(), entry.getType(), user)));
+                updatedEntries.add(createDTOFromEntry(savedEntry));
+            }
+        }
+
+        if (conflictingEntriesOnId.isEmpty() && conflictingEntriesOnCategory.isEmpty() && conflictingEntriesOnLastUpdate.isEmpty())
+            return new UpdateEntriesResponse(
+                    HttpStatus.CREATED,
+                    "Success",
+                    "All entries have been updated.",
+                    from(now()),
+                    updatedEntries,
+                    conflictingEntriesOnId,
+                    conflictingEntriesOnCategory,
+                    conflictingEntriesOnLastUpdate);
+        else
+            return new UpdateEntriesResponse(
+                    HttpStatus.CONFLICT,
+                    "Failure",
+                    "Attempt to update conflicting entries.",
+                    from(now()),
+                    updatedEntries,
+                    conflictingEntriesOnId,
+                    conflictingEntriesOnCategory,
+                    conflictingEntriesOnLastUpdate);
+    }
+
+    private Entry createEntryFromDTO(EntryDTO entryDTO, User user, Category category) {
         return new Entry(
                 entryDTO.getId(),
-                user,entryDTO.getType(),
+                user, entryDTO.getType(),
                 category,
                 entryDTO.getDescription(),
                 entryDTO.getAmount(),
@@ -113,7 +164,7 @@ public class EntryService {
                 entryDTO.getIsDeleted());
     }
 
-    private EntryDTO createDTOFromEntry(Entry entry){
+    private EntryDTO createDTOFromEntry(Entry entry) {
         return new EntryDTO(
                 entry.getId(),
                 entry.getType(),
@@ -125,4 +176,7 @@ public class EntryService {
                 entry.getIsDeleted());
 
     }
+
+
 }
+
