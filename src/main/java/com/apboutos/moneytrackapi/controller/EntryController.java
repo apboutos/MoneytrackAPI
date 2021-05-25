@@ -3,6 +3,7 @@ package com.apboutos.moneytrackapi.controller;
 import com.apboutos.moneytrackapi.controller.Response.CreateEntriesResponse;
 import com.apboutos.moneytrackapi.controller.Response.DeleteEntriesResponse;
 import com.apboutos.moneytrackapi.controller.Response.GetEntriesResponse;
+import com.apboutos.moneytrackapi.controller.Response.UpdateEntriesResponse;
 import com.apboutos.moneytrackapi.controller.dto.EntryDTO;
 import com.apboutos.moneytrackapi.service.EntryService;
 import lombok.AllArgsConstructor;
@@ -43,6 +44,14 @@ public class EntryController {
     ResponseEntity<DeleteEntriesResponse> deleteEntries(@Valid @RequestBody List<EntryDTO> entries){
 
         DeleteEntriesResponse response = entryService.deleteEntries(entries);
+
+        return new ResponseEntity<>(response,response.getStatus());
+    }
+
+    @PutMapping
+    ResponseEntity<UpdateEntriesResponse> updateEntries(@Valid @RequestBody List<EntryDTO> entries, Authentication authentication){
+
+        UpdateEntriesResponse response = entryService.updateEntries(entries, authentication.getName());
 
         return new ResponseEntity<>(response,response.getStatus());
     }
