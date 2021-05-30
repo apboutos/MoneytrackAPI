@@ -1,4 +1,7 @@
 spring:
+  profiles:
+    active: @spring.profiles.active@
+
   datasource:
     url: jdbc:mysql://localhost:3306/Moneytrack
     username: root
