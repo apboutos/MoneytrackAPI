@@ -1,6 +1,7 @@
 package com.apboutos.moneytrackapi.service;
 
 import com.apboutos.moneytrackapi.controller.exception.CategoryExistsException;
+import com.apboutos.moneytrackapi.controller.exception.CategoryNotFoundException;
 import com.apboutos.moneytrackapi.model.Category;
 import com.apboutos.moneytrackapi.controller.dto.CategoryDTO;
 import com.apboutos.moneytrackapi.model.User;
@@ -40,6 +41,20 @@ public class CategoryService {
 
         Category result = repository.save(category);
         return new CategoryDTO(result.getId().getName(),result.getId().getType());
+    }
+
+
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO, String username) throws CategoryNotFoundException {
+
+        User user = (User)userService.loadUserByUsername(username);
+        Category category = new Category(categoryDTO.getName(),categoryDTO.getType(),user);
+
+        Optional<Category> searchResult = repository.findCategoryById(category.getId());
+        if(searchResult.isEmpty()) throw new CategoryNotFoundException("This category already exists.");
+
+        repository.updateCategory(category,category.getId());
+
+        return categoryDTO;
     }
 
 }
