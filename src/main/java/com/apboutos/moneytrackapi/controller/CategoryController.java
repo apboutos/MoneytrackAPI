@@ -1,6 +1,7 @@
 package com.apboutos.moneytrackapi.controller;
 
 import com.apboutos.moneytrackapi.controller.Response.CategoryCreationResponse;
+import com.apboutos.moneytrackapi.controller.Response.GeneralResponse;
 import com.apboutos.moneytrackapi.controller.exception.CategoryExistsException;
 import com.apboutos.moneytrackapi.controller.dto.CategoryDTO;
 import com.apboutos.moneytrackapi.service.CategoryService;
@@ -34,5 +35,12 @@ public class CategoryController {
 
         var dto = categoryService.createCategory(categoryDTO, authentication.getName());
         return new ResponseEntity<>(new CategoryCreationResponse(HttpStatus.CREATED,"Success","Category created", from(now()),dto),HttpStatus.CREATED);
+    }
+
+    @PutMapping
+    public ResponseEntity<GeneralResponse> updateCategory(@Valid @RequestBody CategoryDTO categoryDTO, Authentication authentication) throws CategoryExistsException {
+
+
+        return null;
     }
 }
