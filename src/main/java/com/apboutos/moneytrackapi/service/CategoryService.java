@@ -26,7 +26,7 @@ public class CategoryService {
         List<Category> categories = repository.findCategoriesByUser((User)userService.loadUserByUsername(username));
 
         return categories.stream()
-                .map((category -> new CategoryDTO(category.getId().getName(),category.getId().getType())))
+                .map((category -> new CategoryDTO(category.getId(),category.getName(),category.getType())))
                 .collect(Collectors.toList());
 
     }
@@ -34,27 +34,23 @@ public class CategoryService {
     public CategoryDTO createCategory(CategoryDTO categoryDTO, String username) throws CategoryExistsException {
 
         User user = (User)userService.loadUserByUsername(username);
-        Category category = new Category(categoryDTO.getName(),categoryDTO.getType(),user);
+        Category category = new Category(categoryDTO.getId(),categoryDTO.getName(),categoryDTO.getType(),user);
 
         Optional<Category> searchResult = repository.findCategoryById(category.getId());
         if(searchResult.isPresent()) throw new CategoryExistsException("This category already exists.");
 
         Category result = repository.save(category);
-        return new CategoryDTO(result.getId().getName(),result.getId().getType());
+        return new CategoryDTO(result.getId(),result.getName(),result.getType());
     }
 
 
-    public CategoryDTO updateCategory(CategoryDTO categoryDTO, String username) throws CategoryNotFoundException {
+    public void updateCategory(CategoryDTO categoryDTO) throws CategoryNotFoundException {
 
-        User user = (User)userService.loadUserByUsername(username);
-        Category category = new Category(categoryDTO.getName(),categoryDTO.getType(),user);
+        Optional<Category> searchResult = repository.findCategoryById(categoryDTO.getId());
+        if(searchResult.isEmpty()) throw new CategoryNotFoundException("This category does not exist.");
 
-        Optional<Category> searchResult = repository.findCategoryById(category.getId());
-        if(searchResult.isEmpty()) throw new CategoryNotFoundException("This category already exists.");
+        repository.updateCategory(categoryDTO.getId(),categoryDTO.getName(),categoryDTO.getType());
 
-        repository.updateCategory(category,category.getId());
-
-        return categoryDTO;
     }
 
 }

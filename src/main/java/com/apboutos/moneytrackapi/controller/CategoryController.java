@@ -1,9 +1,10 @@
 package com.apboutos.moneytrackapi.controller;
 
 import com.apboutos.moneytrackapi.controller.Response.CategoryCreationResponse;
-import com.apboutos.moneytrackapi.controller.Response.GeneralResponse;
-import com.apboutos.moneytrackapi.controller.exception.CategoryExistsException;
+import com.apboutos.moneytrackapi.controller.Response.CategoryUpdateResponse;
 import com.apboutos.moneytrackapi.controller.dto.CategoryDTO;
+import com.apboutos.moneytrackapi.controller.exception.CategoryExistsException;
+import com.apboutos.moneytrackapi.controller.exception.CategoryNotFoundException;
 import com.apboutos.moneytrackapi.service.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,9 +39,9 @@ public class CategoryController {
     }
 
     @PutMapping
-    public ResponseEntity<GeneralResponse> updateCategory(@Valid @RequestBody CategoryDTO categoryDTO, Authentication authentication) throws CategoryExistsException {
+    public ResponseEntity<CategoryUpdateResponse> updateCategory(@Valid @RequestBody CategoryDTO categoryDTO) throws CategoryNotFoundException {
 
-
-        return null;
+        categoryService.updateCategory(categoryDTO);
+        return new ResponseEntity<>(new CategoryUpdateResponse(HttpStatus.CREATED,"Success","Categroy updated",from(now()),categoryDTO),HttpStatus.CREATED);
     }
 }

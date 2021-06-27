@@ -11,6 +11,8 @@ import static com.apboutos.moneytrackapi.model.Entry.*;
 public class CategoryDTO {
 
     @NotBlank
+    private final String id;
+    @NotBlank
     private final String name;
     @NotNull
     private final Type type;
