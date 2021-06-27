@@ -5,7 +5,6 @@ import com.apboutos.moneytrackapi.controller.Response.DeleteEntriesResponse;
 import com.apboutos.moneytrackapi.controller.Response.GetEntriesResponse;
 import com.apboutos.moneytrackapi.controller.Response.UpdateEntriesResponse;
 import com.apboutos.moneytrackapi.model.Category;
-import com.apboutos.moneytrackapi.model.CategoryId;
 import com.apboutos.moneytrackapi.model.Entry;
 import com.apboutos.moneytrackapi.controller.dto.EntryDTO;
 import com.apboutos.moneytrackapi.model.User;
@@ -16,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class EntryService {
             if (entrySearchResult.isPresent())
                 conflictingEntriesOnId.add(entry);
             else {
-                Optional<Category> categorySearchResult = categoryRepository.findCategoryById(new CategoryId(entry.getCategory(), entry.getType(), user.getUsername()));
+                Optional<Category> categorySearchResult = categoryRepository.findCategoryById(entry.getCategory());
                 if (categorySearchResult.isEmpty())
                     conflictingEntriesOnCategory.add(entry);
                 else {
@@ -115,7 +115,7 @@ public class EntryService {
         for (EntryDTO entry : entries) {
 
             Optional<Entry> result = entryRepository.findEntryById(entry.getId());
-            Optional<Category> categorySearchResult = categoryRepository.findCategoryById(new CategoryId(entry.getCategory(), entry.getType(), user.getUsername()));
+            Optional<Category> categorySearchResult = categoryRepository.findCategoryById(entry.getCategory());
 
             if (result.isEmpty())
                 conflictingEntriesOnId.add(entry);
@@ -125,7 +125,7 @@ public class EntryService {
                 conflictingEntriesOnLastUpdate.add(entry);
             else {
                 entryRepository.deleteEntryById(entry.getId());
-                Entry savedEntry = entryRepository.save(createEntryFromDTO(entry, user, new Category(entry.getCategory(), entry.getType(), user)));
+                Entry savedEntry = entryRepository.save(createEntryFromDTO(entry, user, new Category(entry.getCategory(),entry.getCategory(), entry.getType(), user)));
                 updatedEntries.add(createDTOFromEntry(savedEntry));
             }
         }
@@ -168,7 +168,7 @@ public class EntryService {
         return new EntryDTO(
                 entry.getId(),
                 entry.getType(),
-                entry.getCategory().getId().getName(),
+                entry.getCategory().getName(),
                 entry.getDescription(),
                 entry.getAmount(),
                 entry.getCreatedAt(),

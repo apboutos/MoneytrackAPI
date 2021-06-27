@@ -28,9 +28,6 @@ public class Entry {
     @NotNull
     private Type type;
     @ManyToOne(targetEntity = Category.class)
-    @JoinColumns({@JoinColumn(name = "category_name",referencedColumnName = "name"),
-                  @JoinColumn(name = "category_type" , referencedColumnName = "type"),
-                  @JoinColumn(name = "category_username" , referencedColumnName = "username")})
     @NotNull
     private Category category;
     @Size(max = 45)

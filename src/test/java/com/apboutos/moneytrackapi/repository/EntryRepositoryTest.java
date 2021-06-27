@@ -34,7 +34,7 @@ class EntryRepositoryTest {
         //given
 
         User testUser = userRepository.save(new User("testUser@test.com","000000000000000000000000000000000000000000000000000000000000"));
-        Category testCategory = categoryRepository.save(new Category("Test Category", Entry.Type.Income,testUser));
+        Category testCategory = categoryRepository.save(new Category("id1","Test Category", Entry.Type.Income,testUser));
         Entry testEntry = new Entry("testEntry",testUser, Entry.Type.Income,
                 testCategory, "test",
                 0.0, new Date(343), from(now()), false);
@@ -56,7 +56,7 @@ class EntryRepositoryTest {
 
         //given
         User testUser = userRepository.save(new User("testUser@test.com","000000000000000000000000000000000000000000000000000000000000"));
-        Category testCategory = categoryRepository.save(new Category("Test Category", Entry.Type.Income,testUser));
+        Category testCategory = categoryRepository.save(new Category("id1","Test Category", Entry.Type.Income,testUser));
 
         Timestamp lastUpdate1 = Timestamp.valueOf("2021-05-23 15:29:30");
         Timestamp lastUpdate2 = Timestamp.valueOf("2021-05-23 15:29:31");
