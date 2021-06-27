@@ -18,8 +18,11 @@ import static com.apboutos.moneytrackapi.model.Entry.Type;
 @ToString(of = {"id"})
 public class Category {
 
-    @EmbeddedId
-    private CategoryId id;
+    @Id
+    private final String id;
+    private String name;
+    private Type type;
+
     private final Timestamp createdAt = Timestamp.from(Instant.now());
 
     @ManyToOne(targetEntity = User.class)
@@ -29,8 +32,10 @@ public class Category {
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "category")
     private List<Entry> entries;
 
-    public Category(String name, Type type, User user){
-        this.id = new CategoryId(name,type,user.getUsername());
+    public Category(String id, String name, Type type, User user){
+        this.id = id;
+        this.name = name;
+        this.type = type;
         this.user = user;
     }
 
