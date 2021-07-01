@@ -8,6 +8,7 @@ import com.apboutos.moneytrackapi.model.User;
 import com.apboutos.moneytrackapi.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +44,7 @@ public class CategoryService {
         return new CategoryDTO(result.getId(),result.getName(),result.getType());
     }
 
-
+    @Transactional
     public void updateCategory(CategoryDTO categoryDTO) throws CategoryNotFoundException {
 
         Optional<Category> searchResult = repository.findCategoryById(categoryDTO.getId());
@@ -52,5 +53,4 @@ public class CategoryService {
         repository.updateCategory(categoryDTO.getId(),categoryDTO.getName(),categoryDTO.getType());
 
     }
-
 }
