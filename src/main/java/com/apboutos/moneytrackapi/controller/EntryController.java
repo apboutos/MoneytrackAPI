@@ -49,9 +49,9 @@ public class EntryController {
     }
 
     @PutMapping
-    ResponseEntity<UpdateEntriesResponse> updateEntries(@Valid @RequestBody List<EntryDTO> entries, Authentication authentication){
+    ResponseEntity<UpdateEntriesResponse> updateEntries(@Valid @RequestBody List<EntryDTO> entries){
 
-        UpdateEntriesResponse response = entryService.updateEntries(entries, authentication.getName());
+        UpdateEntriesResponse response = entryService.updateEntries(entries);
 
         return new ResponseEntity<>(response,response.getStatus());
     }
