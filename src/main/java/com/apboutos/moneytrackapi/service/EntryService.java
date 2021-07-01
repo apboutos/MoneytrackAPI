@@ -103,9 +103,8 @@ public class EntryService {
     }
 
     @Transactional
-    public UpdateEntriesResponse updateEntries(List<EntryDTO> entries, String username) {
+    public UpdateEntriesResponse updateEntries(List<EntryDTO> entries) {
 
-        User user = (User) userService.loadUserByUsername(username);
         List<EntryDTO> updatedEntries = new ArrayList<>();
         List<EntryDTO> conflictingEntriesOnId = new ArrayList<>();
         List<EntryDTO> conflictingEntriesOnCategory = new ArrayList<>();
@@ -123,9 +122,8 @@ public class EntryService {
             else if (result.get().getLastUpdate().after(entry.getLastUpdate()))
                 conflictingEntriesOnLastUpdate.add(entry);
             else {
-                entryRepository.deleteEntryById(entry.getId());
-                Entry savedEntry = entryRepository.save(createEntryFromDTO(entry, user, new Category(entry.getCategory(),entry.getCategory(), entry.getType(), user)));
-                updatedEntries.add(createDTOFromEntry(savedEntry));
+                entryRepository.updateEntry(entry.getId(),entry.getType(),entry.getDescription(),entry.getAmount(),categorySearchResult.get(),entry.getLastUpdate(),entry.getIsDeleted());
+                updatedEntries.add(entry);
             }
         }
 
