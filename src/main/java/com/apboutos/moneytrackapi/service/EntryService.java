@@ -4,9 +4,9 @@ import com.apboutos.moneytrackapi.controller.Response.CreateEntriesResponse;
 import com.apboutos.moneytrackapi.controller.Response.DeleteEntriesResponse;
 import com.apboutos.moneytrackapi.controller.Response.GetEntriesResponse;
 import com.apboutos.moneytrackapi.controller.Response.UpdateEntriesResponse;
+import com.apboutos.moneytrackapi.controller.dto.EntryDTO;
 import com.apboutos.moneytrackapi.model.Category;
 import com.apboutos.moneytrackapi.model.Entry;
-import com.apboutos.moneytrackapi.controller.dto.EntryDTO;
 import com.apboutos.moneytrackapi.model.User;
 import com.apboutos.moneytrackapi.repository.CategoryRepository;
 import com.apboutos.moneytrackapi.repository.EntryRepository;
@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -168,7 +167,7 @@ public class EntryService {
         return new EntryDTO(
                 entry.getId(),
                 entry.getType(),
-                entry.getCategory().getName(),
+                entry.getCategory().getId(),
                 entry.getDescription(),
                 entry.getAmount(),
                 entry.getCreatedAt(),
