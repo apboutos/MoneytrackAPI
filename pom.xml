@@ -49,6 +49,10 @@
             <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
 
         <!-- unit testing dependencies -->
         <dependency>
@@ -81,7 +85,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <profiles>
-                        <profile>awsTest</profile>
+                        <profile>awsDEV</profile>
                     </profiles>
                     <excludes>
                         <exclude>
@@ -101,7 +105,7 @@
 
     <profiles>
         <profile>
-            <id>awsTest</id>
+            <id>awsDEV</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -127,7 +131,9 @@
                 </plugins>
             </build>
             <properties>
-                <spring.profiles.active>awsTest</spring.profiles.active>
+                <spring.profiles.active>
+                    awsDEV
+                </spring.profiles.active>
             </properties>
         </profile>
     </profiles>

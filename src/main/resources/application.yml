@@ -1,6 +1,10 @@
+server:
+  port: 8080
+
 spring:
-  profiles:
-    active: @spring.profiles.active@
+  config:
+    activate:
+      on-profile: default
 
   datasource:
     url: jdbc:mysql://localhost:3306/Moneytrack
@@ -15,6 +19,6 @@ spring:
 
   mail:
     host: localhost
-    port: 1025
+    port: 465
     username: root
     password: ma582468
