@@ -22,14 +22,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserService userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    private static final String ENTRIES = "/api/v1/entries";
+    private static final String CATEGORIES = "/api/v1/categories";
+    private static final String USERS = "/api/v1/users";
+    private static final String ACTUATOR = "/actuator/**";
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-        .authorizeRequests().antMatchers(HttpMethod.POST,"/api/v1/users").permitAll()
-                .antMatchers(HttpMethod.PATCH,"/api/v1/users").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/v1/categories").hasAuthority("USER")
-                .antMatchers(HttpMethod.POST,"/api/v1/categories").hasAuthority("USER")
-                .antMatchers(HttpMethod.PUT,"/api/v1/categories").hasAuthority("USER")
+        .authorizeRequests().antMatchers(HttpMethod.POST, USERS).permitAll()
+                .antMatchers(ACTUATOR).permitAll()
+                .antMatchers(HttpMethod.PATCH, USERS).permitAll()
+                .antMatchers(HttpMethod.GET, CATEGORIES).hasAuthority("USER")
+                .antMatchers(HttpMethod.POST, CATEGORIES).hasAuthority("USER")
+                .antMatchers(HttpMethod.PUT, CATEGORIES).hasAuthority("USER")
+                .antMatchers(HttpMethod.GET, ENTRIES).hasAuthority("USER")
+                .antMatchers(HttpMethod.POST, ENTRIES).hasAuthority("USER")
+                .antMatchers(HttpMethod.PUT, ENTRIES).hasAuthority("USER")
+                .antMatchers(HttpMethod.DELETE, ENTRIES).hasAuthority("USER")
         .anyRequest().authenticated().and().httpBasic();
     }
 
