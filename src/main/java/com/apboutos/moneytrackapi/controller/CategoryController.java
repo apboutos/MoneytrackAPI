@@ -42,6 +42,6 @@ public class CategoryController {
     public ResponseEntity<CategoryUpdateResponse> updateCategory(@Valid @RequestBody CategoryDTO categoryDTO) throws CategoryNotFoundException {
 
         categoryService.updateCategory(categoryDTO);
-        return new ResponseEntity<>(new CategoryUpdateResponse(HttpStatus.CREATED,"Success","Categroy updated",from(now()),categoryDTO),HttpStatus.CREATED);
+        return new ResponseEntity<>(new CategoryUpdateResponse(HttpStatus.CREATED,"Success","Category updated",from(now()),categoryDTO),HttpStatus.CREATED);
     }
 }
