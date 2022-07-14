@@ -15,7 +15,7 @@ import javax.mail.internet.MimeMessage;
 @AllArgsConstructor
 public class EmailService implements EmailSender{
 
-    private final static Logger logger = LoggerFactory.getLogger(EmailService.class);
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
     private final JavaMailSenderImpl mailSender;
 
     @Override
@@ -24,7 +24,7 @@ public class EmailService implements EmailSender{
 
         String linkInsideEmail = "localhost:8080/API/User/confirm?token=" + token;
 
-        try{
+        try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,"utf-8");
             mimeMessageHelper.setText(buildEmail("User",linkInsideEmail),true);
