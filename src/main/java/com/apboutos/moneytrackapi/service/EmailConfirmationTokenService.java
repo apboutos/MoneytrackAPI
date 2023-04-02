@@ -5,13 +5,8 @@ import com.apboutos.moneytrackapi.controller.exception.TokenNotFoundException;
 import com.apboutos.moneytrackapi.model.EmailConfirmationToken;
 import com.apboutos.moneytrackapi.repository.EmailConfirmationTokenRepository;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.sql.Timestamp;
 import java.util.Optional;
