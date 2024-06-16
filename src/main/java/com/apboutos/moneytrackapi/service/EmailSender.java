@@ -1,7 +1,9 @@
 package com.apboutos.moneytrackapi.service;
 
+import org.springframework.scheduling.annotation.Async;
+
 public interface EmailSender {
 
-
-    public void send(String to, String token);
+    @Async
+    void send(String to, String token);
 }

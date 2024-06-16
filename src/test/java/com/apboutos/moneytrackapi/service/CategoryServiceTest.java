@@ -44,9 +44,9 @@ class CategoryServiceTest {
         List<CategoryDTO> actualResult = classUnderTest.getAllCategoriesOfUser("TestUser");
 
         assertThat(actualResult.size()).isEqualTo(1);
-        assertThat(actualResult.get(0).getId()).isEqualTo("testId");
-        assertThat(actualResult.get(0).getName()).isEqualTo("testName");
-        assertThat(actualResult.get(0).getType()).isEqualTo(Entry.Type.Income);
+        assertThat(actualResult.get(0).id()).isEqualTo("testId");
+        assertThat(actualResult.get(0).name()).isEqualTo("testName");
+        assertThat(actualResult.get(0).type()).isEqualTo(Entry.Type.Income);
     }
 
     @Test

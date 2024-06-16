@@ -43,11 +43,11 @@ public class EntryService {
 
         for (EntryDTO entry : entries) {
 
-            Optional<Entry> entrySearchResult = entryRepository.findEntryById(entry.getId());
+            Optional<Entry> entrySearchResult = entryRepository.findEntryById(entry.id());
             if (entrySearchResult.isPresent())
                 conflictingEntriesOnId.add(entry);
             else {
-                Optional<Category> categorySearchResult = categoryRepository.findCategoryById(entry.getCategory());
+                Optional<Category> categorySearchResult = categoryRepository.findCategoryById(entry.category());
                 if (categorySearchResult.isEmpty())
                     conflictingEntriesOnCategory.add(entry);
                 else {
@@ -91,8 +91,8 @@ public class EntryService {
 
         List<EntryDTO> conflictingEntries = new ArrayList<>();
         entries.forEach(e -> {
-            entryRepository.deleteEntryById(e.getId());
-            if (entryRepository.findEntryById(e.getId()).isPresent())
+            entryRepository.deleteEntryById(e.id());
+            if (entryRepository.findEntryById(e.id()).isPresent())
                 conflictingEntries.add(e);
         });
 
@@ -112,17 +112,17 @@ public class EntryService {
 
         for (EntryDTO entry : entries) {
 
-            Optional<Entry> result = entryRepository.findEntryById(entry.getId());
-            Optional<Category> categorySearchResult = categoryRepository.findCategoryById(entry.getCategory());
+            Optional<Entry> result = entryRepository.findEntryById(entry.id());
+            Optional<Category> categorySearchResult = categoryRepository.findCategoryById(entry.category());
 
             if (result.isEmpty())
                 conflictingEntriesOnId.add(entry);
             else if (categorySearchResult.isEmpty())
                 conflictingEntriesOnCategory.add(entry);
-            else if (result.get().getLastUpdate().after(entry.getLastUpdate()))
+            else if (result.get().getLastUpdate().after(entry.lastUpdate()))
                 conflictingEntriesOnLastUpdate.add(entry);
             else {
-                entryRepository.updateEntry(entry.getId(),entry.getType(),entry.getDescription(),entry.getAmount(),categorySearchResult.get(),entry.getLastUpdate(),entry.getIsDeleted());
+                entryRepository.updateEntry(entry.id(),entry.type(),entry.description(),entry.amount(),categorySearchResult.get(),entry.lastUpdate(),entry.isDeleted());
                 updatedEntries.add(entry);
             }
         }
@@ -151,14 +151,14 @@ public class EntryService {
 
     private Entry createEntryFromDTO(EntryDTO entryDTO, User user, Category category) {
         return new Entry(
-                entryDTO.getId(),
-                user, entryDTO.getType(),
+                entryDTO.id(),
+                user, entryDTO.type(),
                 category,
-                entryDTO.getDescription(),
-                entryDTO.getAmount(),
-                entryDTO.getDate(),
-                entryDTO.getLastUpdate(),
-                entryDTO.getIsDeleted());
+                entryDTO.description(),
+                entryDTO.amount(),
+                entryDTO.date(),
+                entryDTO.lastUpdate(),
+                entryDTO.isDeleted());
     }
 
     private EntryDTO createDTOFromEntry(Entry entry) {

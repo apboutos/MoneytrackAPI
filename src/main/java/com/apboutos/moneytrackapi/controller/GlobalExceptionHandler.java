@@ -27,16 +27,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
     }
 
-    @ExceptionHandler(EmailTakenException.class)
-    ResponseEntity<Object> handleUserNotSavedException(EmailTakenException exception, WebRequest webRequest){
-        return handleExceptionInternal(exception,
-                new UserRegistrationResponse(HttpStatus.CONFLICT,"Failure","e-mail is taken.",Timestamp.from(Instant.now()),null),
-                new HttpHeaders(),
-                HttpStatus.METHOD_NOT_ALLOWED,
-                webRequest
-        );
-    }
-
     @ExceptionHandler(UserNotSavedException.class)
     ResponseEntity<Object> handleUserNotSavedException(UserNotSavedException exception, WebRequest webRequest){
         return handleExceptionInternal(exception,

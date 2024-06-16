@@ -8,10 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 @Service
@@ -29,7 +28,7 @@ public class JWTService {
 
         return (Claims) Jwts
                 .parser()
-                .setSigningKey(getSigningKey())
+                .verifyWith(getSecretKey())
                 .build()
                 .parse(token)
                 .getPayload();
@@ -44,20 +43,9 @@ public class JWTService {
         return extractClaim(token,Claims::getExpiration);
     }
 
-    private Key getSigningKey() {
+    private SecretKey getSecretKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
-    }
-
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return Jwts
-                .builder()
-                .claims(extraClaims)
-                .subject(userDetails.getUsername())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
-                .signWith(getSigningKey())
-                .compact();
     }
 
     public String generateToken(UserDetails userDetails) {
@@ -67,7 +55,7 @@ public class JWTService {
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
-                .signWith(getSigningKey())
+                .signWith(getSecretKey())
                 .compact();
     }
 
