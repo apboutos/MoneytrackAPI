@@ -1,10 +1,13 @@
 package com.apboutos.moneytrackapi.controller;
 
+import com.apboutos.moneytrackapi.controller.Request.UserAuthenticationRequest;
 import com.apboutos.moneytrackapi.controller.Request.UserRegistrationRequest;
+import com.apboutos.moneytrackapi.controller.Response.UserAuthenticationResponse;
 import com.apboutos.moneytrackapi.controller.Response.UserConfirmationResponse;
 import com.apboutos.moneytrackapi.controller.Response.UserRegistrationResponse;
 import com.apboutos.moneytrackapi.controller.exception.*;
 import com.apboutos.moneytrackapi.model.EmailConfirmationToken;
+import com.apboutos.moneytrackapi.service.AuthenticationService;
 import lombok.AllArgsConstructor;
 import com.apboutos.moneytrackapi.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -21,30 +24,45 @@ import java.time.Instant;
 @AllArgsConstructor
 public class UserController {
 
+    private final AuthenticationService authenticationService;
     private final UserService userService;
 
 
-    @PostMapping
+    @PostMapping("/register")
     ResponseEntity<UserRegistrationResponse> postUser(@RequestBody UserRegistrationRequest request) throws UsernameTakenException, UserNotSavedException {
 
-        EmailConfirmationToken token = userService.registerUser(request);
-        return new ResponseEntity<>(new UserRegistrationResponse(
-                HttpStatus.CREATED,
-                "Success",
+        final EmailConfirmationToken token = userService.registerUser(request);
+        return ResponseEntity.ok(new UserRegistrationResponse(
+                HttpStatus.OK,
+                "Succeeded",
                 "User created, but not enabled until e-mail confirmation.",
                 Timestamp.from(Instant.now()),
-                token.getToken()),HttpStatus.CREATED);
+                token.getToken()));
     }
 
-    @PatchMapping
+    @PatchMapping("/confirm")
     public ResponseEntity<UserConfirmationResponse> confirmUser(@RequestParam String token) throws TokenNotFoundException, TokenExpiredException {
 
         userService.confirmUser(token, Timestamp.from(Instant.now()));
 
-        return new ResponseEntity<>(new UserConfirmationResponse(
+        return ResponseEntity.ok(new UserConfirmationResponse(
                 HttpStatus.OK,
-                "Success",
+                "Succeeded",
                 "Email confirmed. User enabled.",
-                Timestamp.from(Instant.now())),HttpStatus.OK);
+                Timestamp.from(Instant.now())));
+    }
+
+    @PostMapping("/authenticate")
+    ResponseEntity<UserAuthenticationResponse> authenticateUser(@RequestBody UserAuthenticationRequest request) {
+
+        final String jwToken = authenticationService.authenticateUser(request);
+
+        return ResponseEntity.accepted().body(new UserAuthenticationResponse(
+                HttpStatus.ACCEPTED,
+                "Succeeded",
+                "User authenticated.",
+                Timestamp.from(Instant.now()),
+                jwToken));
+
     }
 }

@@ -16,6 +16,8 @@ import static com.apboutos.moneytrackapi.model.User.UserRolePermission.*;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"username"})

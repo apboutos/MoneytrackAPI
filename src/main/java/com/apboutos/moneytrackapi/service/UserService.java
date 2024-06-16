@@ -1,11 +1,18 @@
 package com.apboutos.moneytrackapi.service;
 
+import com.apboutos.moneytrackapi.controller.Request.UserAuthenticationRequest;
 import com.apboutos.moneytrackapi.controller.Request.UserRegistrationRequest;
 import com.apboutos.moneytrackapi.controller.exception.*;
 import com.apboutos.moneytrackapi.model.EmailConfirmationToken;
 import com.apboutos.moneytrackapi.model.User;
 import com.apboutos.moneytrackapi.repository.UserRepository;
+import com.apboutos.moneytrackapi.security.JWTService;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,6 +33,7 @@ public class UserService implements UserDetailsService {
     private final static String USER_NOT_FOUND_MSG = "User with username %s not found";
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailConfirmationTokenService emailConfirmationTokenService;
+
     //private final EmailSender emailSender;
 
     @Override
@@ -37,7 +45,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public EmailConfirmationToken registerUser(UserRegistrationRequest request) throws UserNotSavedException,UsernameTakenException {
 
-        User user = new User(request.getUsername(), passwordEncoder.encode(request.getPassword()));
+        final User user = new User(request.getUsername(), passwordEncoder.encode(request.getPassword()));
         user.setRegistrationDate(Timestamp.from(Instant.now()));
         user.setUserRole(User.UserRole.USER);
 
@@ -45,12 +53,12 @@ public class UserService implements UserDetailsService {
             throw new UsernameTakenException();
         }
 
-        User databaseSavedUser = repository.save(user);
+        final User databaseSavedUser = repository.save(user);
         if (!user.confirmProperDatabaseSave(databaseSavedUser)) {
             throw new UserNotSavedException("Database failed to save user.");
         }
 
-        EmailConfirmationToken token = new EmailConfirmationToken(
+        final EmailConfirmationToken token = new EmailConfirmationToken(
                 UUID.randomUUID().toString(),
                 databaseSavedUser,
                 Timestamp.from(Instant.now()),
@@ -64,11 +72,13 @@ public class UserService implements UserDetailsService {
 
     }
 
+
     @Transactional
     public void confirmUser(String token, Timestamp confirmedAt) throws TokenExpiredException, TokenNotFoundException {
 
-        EmailConfirmationToken confirmedToken = emailConfirmationTokenService.validateEmailConfirmationToken(token,confirmedAt);
+        final EmailConfirmationToken confirmedToken = emailConfirmationTokenService.validateEmailConfirmationToken(token,confirmedAt);
 
         repository.enableUser(confirmedToken.getUser().getUsername());
     }
+
 }
