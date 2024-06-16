@@ -8,9 +8,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -35,27 +37,25 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-        .authorizeHttpRequests()
-                .requestMatchers(ACTUATOR).permitAll()
-                .requestMatchers(HttpMethod.POST, USERS).permitAll()
-                .requestMatchers(HttpMethod.PATCH, USERS).permitAll()
-                .requestMatchers(HttpMethod.GET, CATEGORIES).hasAuthority("USER")
-                .requestMatchers(HttpMethod.POST, CATEGORIES).hasAuthority("USER")
-                .requestMatchers(HttpMethod.PUT, CATEGORIES).hasAuthority("USER")
-                .requestMatchers(HttpMethod.GET, ENTRIES).hasAuthority("USER")
-                .requestMatchers(HttpMethod.POST, ENTRIES).hasAuthority("USER")
-                .requestMatchers(HttpMethod.PUT, ENTRIES).hasAuthority("USER")
-                .requestMatchers(HttpMethod.DELETE, ENTRIES).hasAuthority("USER")
-                .anyRequest()
-                .authenticated()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+        http.csrf(AbstractHttpConfigurer::disable);
+
+        http.authorizeHttpRequests(request -> {
+            request.requestMatchers(ACTUATOR).permitAll();
+            request.requestMatchers(HttpMethod.POST, USERS).permitAll();
+            request.requestMatchers(HttpMethod.PATCH, USERS).permitAll();
+            request.requestMatchers(HttpMethod.GET, CATEGORIES).hasAuthority("USER");
+            request.requestMatchers(HttpMethod.POST, CATEGORIES).hasAuthority("USER");
+            request.requestMatchers(HttpMethod.PUT, CATEGORIES).hasAuthority("USER");
+            request.requestMatchers(HttpMethod.GET, ENTRIES).hasAuthority("USER");
+            request.requestMatchers(HttpMethod.POST, ENTRIES).hasAuthority("USER");
+            request.requestMatchers(HttpMethod.PUT, ENTRIES).hasAuthority("USER");
+            request.requestMatchers(HttpMethod.DELETE, ENTRIES).hasAuthority("USER");
+            request.anyRequest().authenticated();
+        });
+        http.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(daoAuthenticationProvider())
                 .addFilterBefore(basicAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .httpBasic();
+                .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
