@@ -6,14 +6,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
-@Service
+
 @AllArgsConstructor
-public class EmailService implements EmailSender{
+public class EmailService implements EmailSender {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
     private final JavaMailSenderImpl mailSender;
@@ -27,7 +26,7 @@ public class EmailService implements EmailSender{
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,"utf-8");
-            mimeMessageHelper.setText(buildEmail("User",linkInsideEmail),true);
+            mimeMessageHelper.setText(buildEmail(to,linkInsideEmail),true);
             mimeMessageHelper.setFrom("server@moneytrack.com");
             mimeMessageHelper.setTo(to);
             mimeMessageHelper.setSubject("e-mail confirmation");
